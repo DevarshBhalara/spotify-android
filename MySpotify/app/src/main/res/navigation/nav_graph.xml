@@ -19,4 +19,11 @@
         android:id="@+id/searchHistoryFragment"
         android:name="com.simformsolutions.myspotify.ui.fragment.SearchHistoryFragment"
         android:label="SearchHistoryFragment" />
+
+    <fragment
+        android:name="com.simformsolutions.myspotify.ui.fragment.HomeFragment"
+        tools:layout="@layout/fragment_home"
+        android:id="@+id/homeFragment"
+        />
+
 </navigation>
