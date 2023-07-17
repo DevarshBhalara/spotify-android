@@ -10,4 +10,10 @@
         android:id="@+id/homeFragment"
         android:title="@string/home"
         android:icon="@drawable/baseline_home_24"/>
+
+    <item
+        android:id="@+id/userLibraryFragment"
+        android:contentDescription="@string/user_library"
+        android:title="@string/user_library"
+        android:icon="@drawable/ic_search_16" />
 </menu>

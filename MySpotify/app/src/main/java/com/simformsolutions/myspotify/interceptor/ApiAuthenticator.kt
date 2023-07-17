@@ -1,5 +1,6 @@
 package com.simformsolutions.myspotify.interceptor
 
+import android.util.Log
 import com.simformsolutions.myspotify.data.model.GrantType
 import com.simformsolutions.myspotify.data.repository.AuthRepository
 import com.simformsolutions.myspotify.helper.PreferenceHelper
@@ -23,8 +24,10 @@ class ApiAuthenticator(
         // If Authorization token isn't present then provide access
         // token or try to generate new Authorization token if current
         // is expired.
+        Log.d("token", accessToken)
         return if (response.request.headers["Authorization"] == null || regenerateToken()) {
             response.request.newBuilder().header("Authorization", "Bearer $accessToken").build()
+
         } else {
             null
         }
@@ -49,6 +52,7 @@ class ApiAuthenticator(
                             )
                         }
                         accessToken = data.accessToken
+                        Log.d("token", accessToken)
                         true
                     }
 
