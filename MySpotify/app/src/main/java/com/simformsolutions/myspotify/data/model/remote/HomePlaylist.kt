@@ -17,15 +17,6 @@ data class Images(
     @SerializedName("width") var width: Int? = null
 )
 
-data class Owner(
-    @SerializedName("display_name") var displayName: String? = null,
-    @SerializedName("external_urls") var externalUrls: ExternalUrls? = ExternalUrls(),
-    @SerializedName("href") var href: String? = null,
-    @SerializedName("id") var id: String? = null,
-    @SerializedName("type") var type: String? = null,
-    @SerializedName("uri") var uri: String? = null
-)
-
 data class Tracks(
     @SerializedName("href") var href: String? = null,
     @SerializedName("total") var total: Int? = null
