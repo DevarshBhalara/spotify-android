@@ -91,4 +91,6 @@ dependencies {
     // Glide
     implementation("com.github.bumptech.glide:glide:4.13.2")
 
+    implementation("androidx.media:media:1.6.0")
+
 }
