@@ -102,6 +102,7 @@ class NowPlayingFragment : BaseFragment<FragmentNowPlayingBinding, NowPlayingVie
                                 requireContext().bindService(intent, connection, Context.BIND_AUTO_CREATE)
                                 intent.putExtra("title", track.title)
                                 intent.putExtra("artist", track.artists)
+                                intent.putExtra("id", track.id)
                             }
                             requireContext().startService(intent)
                         }

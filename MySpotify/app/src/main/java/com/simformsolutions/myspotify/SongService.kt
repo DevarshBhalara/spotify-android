@@ -20,6 +20,10 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.os.bundleOf
+import androidx.navigation.NavDeepLinkBuilder
+import com.simformsolutions.myspotify.data.model.local.ItemType
+import com.simformsolutions.myspotify.ui.activity.MainActivity
 import com.simformsolutions.myspotify.utils.AppConstants
 
 
@@ -49,7 +53,7 @@ class SongService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.d("service", "Service Started")
         mediaPlayer?.start()
-        setupNotification(intent?.getStringExtra("title") ?: "N/A", intent?.getStringExtra("artist") ?: "N/A")
+        setupNotification(intent?.getStringExtra("title") ?: "N/A", intent?.getStringExtra("artist") ?: "N/A", intent?.getStringExtra("id") ?: "")
 
         return START_STICKY
     }
@@ -93,10 +97,20 @@ class SongService : Service() {
     }
 
     @SuppressLint("ResourceAsColor")
-    private fun setupNotification(title: String, artist: String) {
+    private fun setupNotification(title: String, artist: String, id: String) {
 
-        val intent = Intent("abc")
-        val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+
+        val args = bundleOf(
+            "trackId" to id,
+            "id" to id,
+            "type" to ItemType.TRACK
+        )
+
+        val pendingIntent = NavDeepLinkBuilder(this)
+            .setComponentName(MainActivity::class.java)
+            .setGraph(R.navigation.nav_graph)
+            .setDestination(R.id.nowPlayingFragment, args)
+            .createPendingIntent()
 
         val previousIntent = Intent("abc")
         val previousPendingIntent = PendingIntent.getBroadcast(
@@ -131,7 +145,7 @@ class SongService : Service() {
             .addAction(R.drawable.ic_previous_24, null, previousPendingIntent)
             .addAction(R.drawable.ic_play_alt_24, null, playPausePendingIntent)
             .addAction(R.drawable.ic_next_24, null, nextPendingIntent)
-            .setStyle(androidx.media.app.NotificationCompat.MediaStyle())
+            .setStyle(androidx.media.app.NotificationCompat.MediaStyle().setShowActionsInCompactView(1))
 
         with(NotificationManagerCompat.from(this)) {
             if (ActivityCompat.checkSelfPermission(
