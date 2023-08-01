@@ -25,6 +25,7 @@ import androidx.navigation.NavDeepLinkBuilder
 import com.simformsolutions.myspotify.data.model.local.ItemType
 import com.simformsolutions.myspotify.ui.activity.MainActivity
 import com.simformsolutions.myspotify.utils.AppConstants
+import java.io.IOException
 
 
 class SongService : Service() {
@@ -41,7 +42,6 @@ class SongService : Service() {
 
     override fun onCreate() {
         Log.d("service", "Service Created")
-        mediaPlayer = MediaPlayer.create(this, R.raw.out_of_time)
         registerReceiver(broadcastReceiver, IntentFilter().apply {
             addAction(AppConstants.INTENT_PREVIOUS)
             addAction(AppConstants.INTENT_PLAY_PAUSE)
@@ -51,10 +51,28 @@ class SongService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Log.d("service", "Service Started")
-        mediaPlayer?.start()
-        setupNotification(intent?.getStringExtra("title") ?: "N/A", intent?.getStringExtra("artist") ?: "N/A", intent?.getStringExtra("id") ?: "")
+        if (mediaPlayer?.isPlaying == true) {
+            mediaPlayer?.stop()
+        }
+        mediaPlayer = MediaPlayer()
+        Log.d("serviceMedia", "Service Started")
 
+        val audioUrl = intent?.getStringExtra("url")
+        if (audioUrl != null) {
+            if (audioUrl.isNotEmpty()){
+                try {
+                    mediaPlayer?.setDataSource(audioUrl)
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+                mediaPlayer?.prepareAsync()
+                mediaPlayer?.setOnPreparedListener { mp ->
+                    mp.start()
+                }
+            }
+        }
+
+        setupNotification(intent?.getStringExtra("title") ?: "N/A", intent?.getStringExtra("artist") ?: "N/A", intent?.getStringExtra("id") ?: "")
         return START_STICKY
     }
 
@@ -73,6 +91,7 @@ class SongService : Service() {
 
     override fun onDestroy() {
         mediaPlayer?.stop()
+        mediaPlayer?.release()
     }
 
     override fun onBind(intent: Intent?): IBinder {

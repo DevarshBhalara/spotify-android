@@ -1,5 +1,6 @@
 package com.simformsolutions.myspotify.ui.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.simformsolutions.myspotify.data.model.local.ItemType
 import com.simformsolutions.myspotify.data.model.local.TrackItem
@@ -63,12 +64,14 @@ class NowPlayingViewModel @Inject constructor(
                         _name.emit(resource.data.name)
                         playlist.track.let { track ->
                             val artists = track.artists.joinToString(", ") { it.name }
+                            Log.d("trackData", track.toString())
                             TrackItem(
                                 track.id,
                                 track.album.images.firstOrNull()?.url,
                                 track.name,
                                 "Track",
-                                artists
+                                artists,
+                                previewUrl = track.previewUrl ?: ""
                             ).also { updateLike(it) }
                         }
                     }
@@ -90,12 +93,14 @@ class NowPlayingViewModel @Inject constructor(
                     resource.data?.name?.let { _name.emit(it) }
                     val items = resource.data?.tracks?.items?.map { track ->
                         val artists = track.artists.joinToString(", ") { it.name }
+                        Log.d("trackData", track.toString())
                         TrackItem(
                             track.id,
                             resource.data.images.firstOrNull()?.url,
                             track.name,
                             "Track",
-                            artists
+                            artists,
+                            previewUrl = track.previewUrl ?: ""
                         ).also { updateLike(it) }
                     }
                     items?.let {
@@ -121,7 +126,8 @@ class NowPlayingViewModel @Inject constructor(
                             track.album.images.firstOrNull()?.url,
                             track.name,
                             "Track",
-                            artists
+                            artists,
+                            previewUrl = track.previewUrl ?: ""
                         ).also { updateLike(it) }
                     }
                     items?.let {

@@ -16,6 +16,7 @@ import android.content.pm.PackageManager
 import android.media.MediaSession2Service.MediaNotification
 import android.os.Build
 import android.os.IBinder
+import android.util.Log
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
@@ -47,8 +48,6 @@ class NowPlayingFragment : BaseFragment<FragmentNowPlayingBinding, NowPlayingVie
 
     private val args: NowPlayingFragmentArgs by navArgs()
     private val activityViewModel: MainViewModel by activityViewModels()
-
-
 
     var isPlaying = true
 
@@ -98,11 +97,13 @@ class NowPlayingFragment : BaseFragment<FragmentNowPlayingBinding, NowPlayingVie
                     viewModel.track.collectLatest { track ->
                         track?.let {
                             //setupNotification(track)
+                            Log.d("url", it.previewUrl)
                             val intent = Intent(requireContext(), SongService::class.java).also {intent ->
-                                requireContext().bindService(intent, connection, Context.BIND_AUTO_CREATE)
                                 intent.putExtra("title", track.title)
                                 intent.putExtra("artist", track.artists)
                                 intent.putExtra("id", track.id)
+                                intent.putExtra("url", track.previewUrl)
+                                requireContext().bindService(intent, connection, Context.BIND_AUTO_CREATE)
                             }
                             requireContext().startService(intent)
                         }
@@ -125,10 +126,10 @@ class NowPlayingFragment : BaseFragment<FragmentNowPlayingBinding, NowPlayingVie
     private fun setupUI() {
         //createNotificationChannel()
         activityViewModel.setAppBarScrollingEnabled(false)
+
         setupTitle()
         requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         viewModel.setupPlayingQueue(args.trackId, args.id, args.type)
-
 
         binding.btnPlayPause.setOnClickListener {
 
